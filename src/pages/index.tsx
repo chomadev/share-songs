@@ -1,7 +1,13 @@
-import Head from 'next/head'
+import Head from 'next/head';
+import { useState } from 'react';
+import Playlist from '../components/playlist';
+import SpotifyAuth from '../lib/spotify-auth';
 import { Container } from '../styles/pages/Home'
 
 const Home: React.FC = () => {
+  let [playlistText, setPlaylistText] = useState('');
+  const [playlistId, setPlaylistId] = useState('');
+
   return (
     <Container>
       <Head>
@@ -9,10 +15,27 @@ const Home: React.FC = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main>
-        <h1>choma.dev</h1>
-      </main>
+      {!playlistId && (
+        <div>
+          <input placeholder="id da playlist"
+            onChange={(e) => setPlaylistText(e.target.value)} />
+          <button onClick={() => setPlaylistId(playlistText)}>Entrar</button>
+          <p>{playlistText}</p>
+        </div>
+      )}
+      {playlistId && <Playlist playlistId={playlistId} />}
     </Container>
   )
 }
+
+export const getServerSideProps = async (context) => {
+  const response = await SpotifyAuth();
+  return {
+    props: {
+      token: 'abc',
+      // data: response
+    }
+  }
+}
+
 export default Home
