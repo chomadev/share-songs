@@ -1,12 +1,15 @@
-import Head from 'next/head';
-import { useState } from 'react';
-import Playlist from '../components/playlist';
-import SpotifyAuth from '../lib/spotify-auth';
+import Head from 'next/head'
+import { useState } from 'react'
+import Playlist from './[playlist_id]/playlist'
 import { Container } from '../styles/pages/Home'
 
-const Home: React.FC = () => {
+interface IProps {
+  playlist: []
+}
+
+const Home: React.FC<IProps> = (props: IProps) => {
   let [playlistText, setPlaylistText] = useState('');
-  const [playlistId, setPlaylistId] = useState('');
+  const [playlist_id, setPlaylistId] = useState(process.env.PLAYLIST_ID);
 
   return (
     <Container>
@@ -15,27 +18,16 @@ const Home: React.FC = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      {!playlistId && (
+      {!playlist_id && (
         <div>
           <input placeholder="id da playlist"
             onChange={(e) => setPlaylistText(e.target.value)} />
-          <button onClick={() => setPlaylistId(playlistText)}>Entrar</button>
+            <input onClick={() => setPlaylistId(playlistText)} />
           <p>{playlistText}</p>
         </div>
       )}
-      {playlistId && <Playlist playlistId={playlistId} />}
+      {playlist_id && <Playlist playlist_id={playlist_id} />}
     </Container>
   )
 }
-
-export const getServerSideProps = async (context) => {
-  const response = await SpotifyAuth();
-  return {
-    props: {
-      token: 'abc',
-      // data: response
-    }
-  }
-}
-
 export default Home
